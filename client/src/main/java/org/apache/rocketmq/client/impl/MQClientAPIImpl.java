@@ -574,6 +574,7 @@ public class MQClientAPIImpl implements NameServerUpdateCallback {
             if (sendSmartMsg || msg instanceof MessageBatch) {
                 // 转换成短的字段，减少json序列化的开销
                 SendMessageRequestHeaderV2 requestHeaderV2 = SendMessageRequestHeaderV2.createSendMessageRequestHeaderV2(requestHeader);
+                // todo request code决定了如何去处理接受到的请求
                 request = RemotingCommand.createRequestCommand(msg instanceof MessageBatch ? RequestCode.SEND_BATCH_MESSAGE : RequestCode.SEND_MESSAGE_V2, requestHeaderV2);
             } else {
                 request = RemotingCommand.createRequestCommand(RequestCode.SEND_MESSAGE, requestHeader);

@@ -31,7 +31,7 @@ public class ThreadLocalIndex {
             this.threadLocalIndex.set(index);
         }
         this.threadLocalIndex.set(++index);
-        return Math.abs(index & POSITIVE_MASK);
+        return Math.abs(index & POSITIVE_MASK); // 清除高位  使得可以一直累加
     }
 
     @Override
