@@ -26,6 +26,10 @@ import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.common.message.MessageQueue;
 import org.apache.rocketmq.remoting.exception.RemotingException;
 
+/**
+ * 主要是发送  开启 和关闭   oneway的意思是发送了不要回调
+ * request 是for rpc
+ */
 public interface MQProducer extends MQAdmin {
     void start() throws MQClientException;
 

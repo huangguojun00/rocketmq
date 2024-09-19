@@ -347,7 +347,7 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
     @Override
     public SendResult send(
         Message msg) throws MQClientException, RemotingException, MQBrokerException, InterruptedException {
-        msg.setTopic(withNamespace(msg.getTopic()));
+        msg.setTopic(withNamespace(msg.getTopic())); // 拼接topic的名字
         return this.defaultMQProducerImpl.send(msg);
     }
 
