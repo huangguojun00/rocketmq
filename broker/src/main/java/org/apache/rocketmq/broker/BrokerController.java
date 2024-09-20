@@ -709,6 +709,11 @@ public class BrokerController {
         }
     }
 
+    /**
+     * controller初始化的时候注册那些处理器
+     * @return
+     * @throws CloneNotSupportedException
+     */
     public boolean initialize() throws CloneNotSupportedException {
 
         boolean result = this.topicConfigManager.load();
@@ -942,6 +947,9 @@ public class BrokerController {
         }
     }
 
+    /**
+     * 注册一些处理器
+     */
     public void registerProcessor() {
         /*
          * SendMessageProcessor
