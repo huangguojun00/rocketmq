@@ -22,6 +22,9 @@ import org.apache.rocketmq.store.queue.BatchConsumeQueue;
 
 import java.io.File;
 
+/**
+ * 这是存储消息的配置  mmap适用io频繁，但是文件小的场景
+ */
 public class MessageStoreConfig {
 
     public static final String MULTI_PATH_SPLITTER = System.getProperty("rocketmq.broker.multiPathSplitter", ",");

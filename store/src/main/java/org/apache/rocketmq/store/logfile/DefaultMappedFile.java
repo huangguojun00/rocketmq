@@ -209,7 +209,7 @@ public class DefaultMappedFile extends AbstractMappedFile {
         int currentPos = WROTE_POSITION_UPDATER.get(this);
 
         if (currentPos < this.fileSize) {
-            ByteBuffer byteBuffer = appendMessageBuffer().slice();
+            ByteBuffer byteBuffer = appendMessageBuffer().slice(); // 分割出来一段缓冲区写数据
             byteBuffer.position(currentPos);
             AppendMessageResult result;
             if (messageExt instanceof MessageExtBatch && !((MessageExtBatch) messageExt).isInnerBatch()) {

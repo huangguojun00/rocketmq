@@ -278,7 +278,7 @@ public class SendMessageProcessor extends AbstractSendMessageProcessor implement
             if (sendTransactionPrepareMessage) {
                 asyncPutMessageFuture = this.brokerController.getTransactionalMessageService().asyncPrepareMessage(msgInner);
             } else {
-                asyncPutMessageFuture = this.brokerController.getMessageStore().asyncPutMessage(msgInner);
+                asyncPutMessageFuture = this.brokerController.getMessageStore().asyncPutMessage(msgInner);  // 普通消息的写入
             }
 
             final int finalQueueIdInt = queueIdInt;
