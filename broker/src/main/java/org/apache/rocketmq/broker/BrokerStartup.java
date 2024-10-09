@@ -55,7 +55,7 @@ public class BrokerStartup {
     public static final SystemConfigFileHelper CONFIG_FILE_HELPER = new SystemConfigFileHelper();
 
     public static void main(String[] args) {
-        start(createBrokerController(args));
+        start(createBrokerController(args));  // createBrokerController 这里初始化
     }
 
     public static BrokerController start(BrokerController controller) {
@@ -221,7 +221,7 @@ public class BrokerStartup {
             // remember all configs to prevent discard
             controller.getConfiguration().registerConfig(properties);
 
-            boolean initResult = controller.initialize();
+            boolean initResult = controller.initialize(); // 这里对controller初始化，包含不同的code对应哪个handler
             if (!initResult) {
                 controller.shutdown();
                 System.exit(-3);

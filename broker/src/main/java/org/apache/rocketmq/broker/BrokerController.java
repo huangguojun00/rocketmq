@@ -777,7 +777,7 @@ public class BrokerController {
 
             initializeResources();
 
-            registerProcessor();
+            registerProcessor(); // 这里决定了request code被哪个handler处理
 
             initializeScheduledTasks();
 

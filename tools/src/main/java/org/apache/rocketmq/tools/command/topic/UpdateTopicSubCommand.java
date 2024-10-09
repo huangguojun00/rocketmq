@@ -97,6 +97,7 @@ public class UpdateTopicSubCommand implements SubCommand {
     public void execute(final CommandLine commandLine, final Options options,
         RPCHook rpcHook) throws SubCommandException {
         DefaultMQAdminExt defaultMQAdminExt = new DefaultMQAdminExt(rpcHook);
+//        defaultMQAdminExt.setNamesrvAddr("127.0.0.1:9876");
         defaultMQAdminExt.setInstanceName(Long.toString(System.currentTimeMillis()));
 
         try {

@@ -280,7 +280,7 @@ public class MQClientInstance {
 
     private void startScheduledTask() {
         if (null == this.clientConfig.getNamesrvAddr()) {
-            this.scheduledExecutorService.scheduleAtFixedRate(() -> {
+            this.scheduledExecutorService.scheduleAtFixedRate(() -> {      // 两分钟拉一次Nameserver的配置
                 try {
                     MQClientInstance.this.mQClientAPIImpl.fetchNameServerAddr();
                 } catch (Exception e) {
@@ -289,7 +289,7 @@ public class MQClientInstance {
             }, 1000 * 10, 1000 * 60 * 2, TimeUnit.MILLISECONDS);
         }
 
-        this.scheduledExecutorService.scheduleAtFixedRate(() -> {
+        this.scheduledExecutorService.scheduleAtFixedRate(() -> {     // 每30s更新一下路由信息
             try {
                 MQClientInstance.this.updateTopicRouteInfoFromNameServer();
             } catch (Exception e) {
@@ -297,7 +297,7 @@ public class MQClientInstance {
             }
         }, 10, this.clientConfig.getPollNameServerInterval(), TimeUnit.MILLISECONDS);
 
-        this.scheduledExecutorService.scheduleAtFixedRate(() -> {
+        this.scheduledExecutorService.scheduleAtFixedRate(() -> {   // 30s心跳确认
             try {
                 MQClientInstance.this.cleanOfflineBroker();
                 MQClientInstance.this.sendHeartbeatToAllBrokerWithLock();
@@ -306,7 +306,7 @@ public class MQClientInstance {
             }
         }, 1000, this.clientConfig.getHeartbeatBrokerInterval(), TimeUnit.MILLISECONDS);
 
-        this.scheduledExecutorService.scheduleAtFixedRate(() -> {
+        this.scheduledExecutorService.scheduleAtFixedRate(() -> { // 更新offset
             try {
                 MQClientInstance.this.persistAllConsumerOffset();
             } catch (Exception e) {
@@ -314,7 +314,7 @@ public class MQClientInstance {
             }
         }, 1000 * 10, this.clientConfig.getPersistConsumerOffsetInterval(), TimeUnit.MILLISECONDS);
 
-        this.scheduledExecutorService.scheduleAtFixedRate(() -> {
+        this.scheduledExecutorService.scheduleAtFixedRate(() -> {  // 调整线程数
             try {
                 MQClientInstance.this.adjustThreadPool();
             } catch (Exception e) {

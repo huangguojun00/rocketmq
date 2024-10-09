@@ -125,7 +125,7 @@ public class PullMessageService extends ServiceThread {
 
         while (!this.isStopped()) {
             try {
-                MessageRequest messageRequest = this.messageRequestQueue.take();
+                MessageRequest messageRequest = this.messageRequestQueue.take();  // take方法 如果有内容就出队一个元素，否则阻塞等待
                 if (messageRequest.getMessageRequestMode() == MessageRequestMode.POP) {
                     this.popMessage((PopRequest)messageRequest);
                 } else {
