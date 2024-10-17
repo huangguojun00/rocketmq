@@ -48,10 +48,11 @@ public class ClientRequestProcessor implements NettyRequestProcessor {
         final RemotingCommand response = RemotingCommand.createResponseCommand(null);
         final GetRouteInfoRequestHeader requestHeader =
             (GetRouteInfoRequestHeader) request.decodeCommandCustomHeader(GetRouteInfoRequestHeader.class);
-
+        // 这一步查出来路由信息
         TopicRouteData topicRouteData = this.namesrvController.getRouteInfoManager().pickupTopicRouteData(requestHeader.getTopic());
 
         if (topicRouteData != null) {
+            // nameserver需要开启顺序模式   Topic才能使用顺序模式
             if (this.namesrvController.getNamesrvConfig().isOrderMessageEnable()) {
                 String orderTopicConf =
                     this.namesrvController.getKvConfigManager().getKVConfig(NamesrvUtil.NAMESPACE_ORDER_TOPIC_CONFIG,

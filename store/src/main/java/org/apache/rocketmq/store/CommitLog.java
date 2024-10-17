@@ -804,13 +804,13 @@ public class CommitLog implements Swappable {
         String topicQueueKey = generateKey(putMessageThreadLocal.getKeyBuilder(), msg);
         long elapsedTimeInLock = 0;
         MappedFile unlockMappedFile = null;
-        MappedFile mappedFile = this.mappedFileQueue.getLastMappedFile();
+        MappedFile mappedFile = this.mappedFileQueue.getLastMappedFile(); // 找最后一个文件映射
 
         long currOffset;
         if (mappedFile == null) {
             currOffset = 0;
         } else {
-            currOffset = mappedFile.getFileFromOffset() + mappedFile.getWrotePosition();
+            currOffset = mappedFile.getFileFromOffset() + mappedFile.getWrotePosition(); // 当前offset位置
         }
 
         int needAckNums = this.defaultMessageStore.getMessageStoreConfig().getInSyncReplicas();

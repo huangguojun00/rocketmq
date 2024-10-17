@@ -53,13 +53,14 @@ public class NamesrvStartup {
     private static ControllerConfig controllerConfig = null;
 
     public static void main(String[] args) {
+        System.out.println(System.getProperty("user.home")); //  "C:\\Users\\YD"
         main0(args);
         controllerManagerMain();
     }
 
     public static void main0(String[] args) {
         try {
-            parseCommandlineAndConfigFile(args);
+            parseCommandlineAndConfigFile(args); // 命令解析
             createAndStartNamesrvController();
         } catch (Throwable e) {
             e.printStackTrace();
@@ -89,8 +90,8 @@ public class NamesrvStartup {
             System.exit(-1);
             return;
         }
-
-        namesrvConfig = new NamesrvConfig();
+        // 这里有个问题  BROKER_HEARTBEAT  为例   NamesrvConfig 和  ControllerConfig 都有配置用谁？
+        namesrvConfig = new NamesrvConfig();// orderMessageEnable 默认是不支持
         nettyServerConfig = new NettyServerConfig();
         nettyClientConfig = new NettyClientConfig();
         nettyServerConfig.setListenPort(9876);
@@ -129,7 +130,7 @@ public class NamesrvStartup {
         }
 
         LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-        JoranConfigurator configurator = new JoranConfigurator();
+        JoranConfigurator configurator = new JoranConfigurator(); // 看起来是日志的配置
         configurator.setContext(lc);
         lc.reset();
         configurator.doConfigure(namesrvConfig.getRocketmqHome() + "/conf/logback_namesrv.xml");

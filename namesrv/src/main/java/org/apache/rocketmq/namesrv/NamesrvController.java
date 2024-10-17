@@ -101,13 +101,13 @@ public class NamesrvController {
     }
 
     public boolean initialize() {
-        loadConfig();
-        initiateNetworkComponents();
-        initiateThreadExecutors();
-        registerProcessor();
-        startScheduleService();
+        loadConfig(); // 加载配置
+        initiateNetworkComponents(); // 开启netty server和client
+        initiateThreadExecutors(); // 初始化两个线程池  一个用来netty客户端处理请求  另一个是默认的
+        registerProcessor(); // netty server的两个处理器   一个是处理Topic broker等相关路由信息   一个处理注册心跳等信息
+        startScheduleService();// 开始定时任务 1.每5s扫描一下有咩有broker心跳超时的，放到未连接的里面去  2.10分钟定期打印配置 3.定期打印water mark 记录信息队列大小和慢请求
         initiateSslContext();
-        initiateRpcHooks();
+        initiateRpcHooks(); // 时区？？
         return true;
     }
 
@@ -138,6 +138,7 @@ public class NamesrvController {
 
     private void initiateThreadExecutors() {
         this.defaultThreadPoolQueue = new LinkedBlockingQueue<>(this.namesrvConfig.getDefaultThreadPoolQueueCapacity());
+        // 这个是干嘛的？？？  用来处理请求
         this.defaultExecutor = new ThreadPoolExecutor(this.namesrvConfig.getDefaultThreadPoolNums(), this.namesrvConfig.getDefaultThreadPoolNums(), 1000 * 60, TimeUnit.MILLISECONDS, this.defaultThreadPoolQueue, new ThreadFactoryImpl("RemotingExecutorThread_")) {
             @Override
             protected <T> RunnableFuture<T> newTaskFor(final Runnable runnable, final T value) {

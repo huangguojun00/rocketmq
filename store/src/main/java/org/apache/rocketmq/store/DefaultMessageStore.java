@@ -492,7 +492,7 @@ public class DefaultMessageStore implements MessageStore {
     @Override
     public CompletableFuture<PutMessageResult> asyncPutMessage(MessageExtBrokerInner msg) {
 
-        for (PutMessageHook putMessageHook : putMessageHookList) {
+         for (PutMessageHook putMessageHook : putMessageHookList) {
             PutMessageResult handleResult = putMessageHook.executeBeforePutMessage(msg);
             if (handleResult != null) {
                 return CompletableFuture.completedFuture(handleResult);

@@ -63,7 +63,7 @@ public class BatchUnregistrationService extends ServiceThread {
             try {
                 final UnRegisterBrokerRequestHeader request = unregistrationQueue.take();
                 Set<UnRegisterBrokerRequestHeader> unregistrationRequests = new HashSet<>();
-                unregistrationQueue.drainTo(unregistrationRequests);
+                unregistrationQueue.drainTo(unregistrationRequests); // 移除所有元素 添加到集合中
 
                 // Add polled request
                 unregistrationRequests.add(request);

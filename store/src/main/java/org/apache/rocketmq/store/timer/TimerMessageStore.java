@@ -710,7 +710,7 @@ public class TimerMessageStore {
         tmpBuffer.putInt(sizePy); //size
         tmpBuffer.putInt(hashTopicForMetrics(realTopic)); //hashcode of real topic
         tmpBuffer.putLong(0); //reserved value, just set to 0 now
-        long ret = timerLog.append(tmpBuffer.array(), 0, TimerLog.UNIT_SIZE);
+        long ret = timerLog.append(tmpBuffer.array(), 0, TimerLog.UNIT_SIZE); // 写到timerlog文件里面
         if (-1 != ret) {
             // If it's a delete message, then slot's total num -1
             // TODO: check if the delete msg is in the same slot with "the msg to be deleted".

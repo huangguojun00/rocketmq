@@ -49,12 +49,12 @@ import org.apache.rocketmq.store.util.LibC;
 import sun.nio.ch.DirectBuffer;
 
 public class DefaultMappedFile extends AbstractMappedFile {
-    public static final int OS_PAGE_SIZE = 1024 * 4;
+    public static final int OS_PAGE_SIZE = 1024 * 4; // 操作系统的缓存页大小
     protected static final InternalLogger log = InternalLoggerFactory.getLogger(LoggerName.STORE_LOGGER_NAME);
 
-    protected static final AtomicLong TOTAL_MAPPED_VIRTUAL_MEMORY = new AtomicLong(0);
+    protected static final AtomicLong TOTAL_MAPPED_VIRTUAL_MEMORY = new AtomicLong(0); // mappedFile虚拟内存总和
 
-    protected static final AtomicInteger TOTAL_MAPPED_FILES = new AtomicInteger(0);
+    protected static final AtomicInteger TOTAL_MAPPED_FILES = new AtomicInteger(0); // mapperFile的文件个数
 
     protected static final AtomicIntegerFieldUpdater<DefaultMappedFile> WROTE_POSITION_UPDATER;
     protected static final AtomicIntegerFieldUpdater<DefaultMappedFile> COMMITTED_POSITION_UPDATER;
@@ -354,7 +354,7 @@ public class DefaultMappedFile extends AbstractMappedFile {
 
         if (writePos - lastCommittedPosition > 0) {
             try {
-                ByteBuffer byteBuffer = writeBuffer.slice();
+                ByteBuffer byteBuffer = writeBuffer.slice(); // 剩余的空间
                 byteBuffer.position(lastCommittedPosition);
                 byteBuffer.limit(writePos);
                 this.fileChannel.position(lastCommittedPosition);

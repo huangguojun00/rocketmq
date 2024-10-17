@@ -217,14 +217,14 @@ public class DefaultMQProducerImpl implements MQProducerInner {
             case CREATE_JUST:
                 this.serviceState = ServiceState.START_FAILED;
 
-                this.checkConfig();
+                this.checkConfig(); //校验topic是否合规
 
                 if (!this.defaultMQProducer.getProducerGroup().equals(MixAll.CLIENT_INNER_PRODUCER_GROUP)) {
                     this.defaultMQProducer.changeInstanceNameToPID();
                 }
-
+                // 创建一个mq client实例
                 this.mQClientFactory = MQClientManager.getInstance().getOrCreateMQClientInstance(this.defaultMQProducer, rpcHook);
-
+                // 注册producer 也就是放到 producerTable里面
                 boolean registerOK = mQClientFactory.registerProducer(this.defaultMQProducer.getProducerGroup(), this);
                 if (!registerOK) {
                     this.serviceState = ServiceState.CREATE_JUST;
@@ -232,11 +232,11 @@ public class DefaultMQProducerImpl implements MQProducerInner {
                         + "] has been created before, specify another name please." + FAQUrl.suggestTodo(FAQUrl.GROUP_NAME_DUPLICATE_URL),
                         null);
                 }
-
+                // 好像没啥卵用，  自动创建topic  一般也不开
                 this.topicPublishInfoTable.put(this.defaultMQProducer.getCreateTopicKey(), new TopicPublishInfo());
 
                 if (startFactory) {
-                    mQClientFactory.start();
+                    mQClientFactory.start(); // 开始
                 }
 
                 log.info("the producer [{}] start OK. sendMessageWithVIPChannel={}", this.defaultMQProducer.getProducerGroup(),
@@ -613,7 +613,7 @@ public class DefaultMQProducerImpl implements MQProducerInner {
         long beginTimestampFirst = System.currentTimeMillis();
         long beginTimestampPrev = beginTimestampFirst;
         long endTimestamp = beginTimestampFirst;
-        // todo 找topic的相关信息
+        // 在本地表中找topic的路由信息，找不到请求nameserver拉取
         TopicPublishInfo topicPublishInfo = this.tryToFindTopicPublishInfo(msg.getTopic());
         if (topicPublishInfo != null && topicPublishInfo.ok()) {
             boolean callTimeout = false;
@@ -626,7 +626,7 @@ public class DefaultMQProducerImpl implements MQProducerInner {
             String[] brokersSent = new String[timesTotal];
             for (; times < timesTotal; times++) {
                 String lastBrokerName = null == mq ? null : mq.getBrokerName();
-                // todo  这里是去选择一个队列
+                //   这里是去选择一个队列
                 MessageQueue mqSelected = this.selectOneMessageQueue(topicPublishInfo, lastBrokerName);
                 if (mqSelected != null) {
                     mq = mqSelected;

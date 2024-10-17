@@ -123,10 +123,10 @@ public class HookUtils {
         final MessageExtBrokerInner msg) {
         final int tranType = MessageSysFlag.getTransactionValue(msg.getSysFlag());
         if (tranType == MessageSysFlag.TRANSACTION_NOT_TYPE
-                || tranType == MessageSysFlag.TRANSACTION_COMMIT_TYPE) {
-            if (!isRolledTimerMessage(msg)) {
-                if (checkIfTimerMessage(msg)) {
-                    if (!brokerController.getMessageStoreConfig().isTimerWheelEnable()) {
+                || tranType == MessageSysFlag.TRANSACTION_COMMIT_TYPE) { // 看起来是非事务消息
+            if (!isRolledTimerMessage(msg)) { // 不是任意时间延迟的消息
+                if (checkIfTimerMessage(msg)) { // 如果是延迟消息
+                    if (!brokerController.getMessageStoreConfig().isTimerWheelEnable()) { // 是否开启时间轮 如果没有开启 就直接拒绝
                         //wheel timer is not enabled, reject the message
                         return new PutMessageResult(PutMessageStatus.WHEEL_TIMER_NOT_ENABLE, null);
                     }

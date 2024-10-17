@@ -21,7 +21,10 @@
 package org.apache.rocketmq.common.namesrv;
 
 import java.io.File;
+
+import io.netty.channel.ChannelHandlerContext;
 import org.apache.rocketmq.common.MixAll;
+import org.apache.rocketmq.remoting.protocol.RemotingCommand;
 
 public class NamesrvConfig {
 
@@ -39,6 +42,7 @@ public class NamesrvConfig {
     private int clientRequestThreadPoolNums = 8;
     /**
      * Indicates the nums of thread to handle broker or operation requests, like REGISTER_BROKER.
+     * @see org.apache.rocketmq.namesrv.processor.DefaultRequestProcessor#processRequest(ChannelHandlerContext, RemotingCommand)
      */
     private int defaultThreadPoolNums = 16;
     /**

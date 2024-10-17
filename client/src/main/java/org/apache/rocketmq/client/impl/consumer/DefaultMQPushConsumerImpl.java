@@ -436,6 +436,7 @@ public class DefaultMQPushConsumerImpl implements MQConsumerInner {
         boolean commitOffsetEnable = false;
         long commitOffsetValue = 0L;
         if (MessageModel.CLUSTERING == this.defaultMQPushConsumer.getMessageModel()) {
+            // 从内存中读取偏移量？？？ why
             commitOffsetValue = this.offsetStore.readOffset(pullRequest.getMessageQueue(), ReadOffsetType.READ_FROM_MEMORY);
             if (commitOffsetValue > 0) {
                 commitOffsetEnable = true;

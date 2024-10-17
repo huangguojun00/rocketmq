@@ -218,7 +218,7 @@ public class NettyRemotingServer extends NettyRemotingAbstract implements Remoti
             .channel(useEpoll() ? EpollServerSocketChannel.class : NioServerSocketChannel.class)
             .option(ChannelOption.SO_BACKLOG, 1024)
             .option(ChannelOption.SO_REUSEADDR, true)
-            .childOption(ChannelOption.SO_KEEPALIVE, false)
+            .childOption(ChannelOption.SO_KEEPALIVE, false) // 只是关闭掉保活机制 但还是长连接 只是自己实现心跳
             .childOption(ChannelOption.TCP_NODELAY, true)
             .localAddress(new InetSocketAddress(this.nettyServerConfig.getBindAddress(),
                 this.nettyServerConfig.getListenPort()))

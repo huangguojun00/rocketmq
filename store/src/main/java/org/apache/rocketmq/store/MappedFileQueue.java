@@ -40,13 +40,13 @@ public class MappedFileQueue implements Swappable {
     private static final InternalLogger log = InternalLoggerFactory.getLogger(LoggerName.STORE_LOGGER_NAME);
     private static final InternalLogger LOG_ERROR = InternalLoggerFactory.getLogger(LoggerName.STORE_ERROR_LOGGER_NAME);
 
-    protected final String storePath;
+    protected final String storePath; // 文件目录地址
 
-    protected final int mappedFileSize;
+    protected final int mappedFileSize; // 单个文件大小
+    // CopyOnWriteArrayList线程安全的List
+    protected final CopyOnWriteArrayList<MappedFile> mappedFiles = new CopyOnWriteArrayList<MappedFile>(); // 文件列表
 
-    protected final CopyOnWriteArrayList<MappedFile> mappedFiles = new CopyOnWriteArrayList<MappedFile>();
-
-    protected final AllocateMappedFileService allocateMappedFileService;
+    protected final AllocateMappedFileService allocateMappedFileService; // mappedFile服务类
 
     protected long flushedWhere = 0;
     protected long committedWhere = 0;
@@ -79,13 +79,19 @@ public class MappedFileQueue implements Swappable {
         }
     }
 
+    /**
+     * 寻找最后修改时间大于给定时间戳的最早一个文件
+     * 找不到就返回最后一个文件
+     * @param timestamp
+     * @return
+     */
     public MappedFile getMappedFileByTime(final long timestamp) {
         Object[] mfs = this.copyMappedFiles(0);
 
         if (null == mfs)
             return null;
 
-        for (int i = 0; i < mfs.length; i++) {
+        for (int i = 0; i < mfs.length; i++) {      // 循环mappedFile列表
             MappedFile mappedFile = (MappedFile) mfs[i];
             if (mappedFile.getLastModifiedTimestamp() >= timestamp) {
                 return mappedFile;
@@ -225,7 +231,7 @@ public class MappedFileQueue implements Swappable {
     }
 
     protected MappedFile tryCreateMappedFile(long createOffset) {
-        String nextFilePath = this.storePath + File.separator + UtilAll.offset2FileName(createOffset);
+        String nextFilePath = this.storePath + File.separator + UtilAll.offset2FileName(createOffset); // 创建新的文件地址？
         String nextNextFilePath = this.storePath + File.separator + UtilAll.offset2FileName(createOffset
                 + this.mappedFileSize);
         return doCreateMappedFile(nextFilePath, nextNextFilePath);
@@ -539,6 +545,8 @@ public class MappedFileQueue implements Swappable {
             MappedFile firstMappedFile = this.getFirstMappedFile();
             MappedFile lastMappedFile = this.getLastMappedFile();
             if (firstMappedFile != null && lastMappedFile != null) {
+                // offset 小于文件开始的offset   或者 offset 大于等于 最后一个文件的结尾offset
+                // 也就是说明这个offset 在文件的范围内 不是是一个合法的offset
                 if (offset < firstMappedFile.getFileFromOffset() || offset >= lastMappedFile.getFileFromOffset() + this.mappedFileSize) {
                     LOG_ERROR.warn("Offset not matched. Request offset: {}, firstOffset: {}, lastOffset: {}, mappedFileSize: {}, mappedFiles count: {}",
                         offset,
@@ -547,6 +555,8 @@ public class MappedFileQueue implements Swappable {
                         this.mappedFileSize,
                         this.mappedFiles.size());
                 } else {
+                    // 合法的offset           // 第几个文件后面                第一个文件的起始offset 其实就是 -0
+                    // 多个文件的时候 需要清理内存 减少压力，所以后面减的不一定是0
                     int index = (int) ((offset / this.mappedFileSize) - (firstMappedFile.getFileFromOffset() / this.mappedFileSize));
                     MappedFile targetFile = null;
                     try {
@@ -554,11 +564,11 @@ public class MappedFileQueue implements Swappable {
                     } catch (Exception ignored) {
                     }
 
-                    if (targetFile != null && offset >= targetFile.getFileFromOffset()
-                        && offset < targetFile.getFileFromOffset() + this.mappedFileSize) {
+                    if (targetFile != null && offset >= targetFile.getFileFromOffset() // 大于这个文件开始的
+                        && offset < targetFile.getFileFromOffset() + this.mappedFileSize) { // 小于这个文件结尾的
                         return targetFile;
                     }
-
+                    // 找不到循环一遍看看是不是在 ？？？什么场景会走这个循环？ 看起来好像走不到  除非commit log文件被中间删掉了一个
                     for (MappedFile tmpMappedFile : this.mappedFiles) {
                         if (offset >= tmpMappedFile.getFileFromOffset()
                             && offset < tmpMappedFile.getFileFromOffset() + this.mappedFileSize) {

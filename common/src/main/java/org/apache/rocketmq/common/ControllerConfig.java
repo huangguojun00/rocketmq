@@ -23,13 +23,14 @@ public class ControllerConfig {
     private String rocketmqHome = System.getProperty(MixAll.ROCKETMQ_HOME_PROPERTY, System.getenv(MixAll.ROCKETMQ_HOME_ENV));
     private String configStorePath = System.getProperty("user.home") + File.separator + "controller" + File.separator + "controller.properties";
 
-    /**
+    /**             定期的
      * Interval of periodic scanning for non-active broker;
      */
     private long scanNotActiveBrokerInterval = 5 * 1000;
 
     /**
      * Indicates the nums of thread to handle broker or operation requests, like REGISTER_BROKER.
+     * @see org.apache.rocketmq.controller.ControllerManager#registerProcessor()
      */
     private int controllerThreadPoolNums = 16;
 

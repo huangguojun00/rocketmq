@@ -293,13 +293,13 @@ public class DefaultLitePullConsumerImpl implements MQConsumerInner {
                     this.defaultLitePullConsumer.changeInstanceNameToPID();
                 }
 
-                initMQClientFactory();
+                initMQClientFactory(); // 注册消费组
 
-                initRebalanceImpl();
+                initRebalanceImpl(); // 主要是指定queue的均衡策略
 
-                initPullAPIWrapper();
+                initPullAPIWrapper(); // 初始化拉消息的api
 
-                initOffsetStore();
+                initOffsetStore(); // 初始化offset
 
                 mQClientFactory.start();
 
@@ -442,7 +442,7 @@ public class DefaultLitePullConsumerImpl implements MQConsumerInner {
         return pullAPIWrapper;
     }
 
-    private void startPullTask(Collection<MessageQueue> mqSet) {
+    private void startPullTask(Collection<MessageQueue> mqSet) { // 把所有队列都拉去消息一遍？ 拉多少？怎么控制？
         for (MessageQueue messageQueue : mqSet) {
             if (!this.taskTable.containsKey(messageQueue)) {
                 PullTaskImpl pullTask = new PullTaskImpl(messageQueue);
@@ -966,6 +966,7 @@ public class DefaultLitePullConsumerImpl implements MQConsumerInner {
                             synchronized (objLock) {
                                 if (pullResult.getMsgFoundList() != null && !pullResult.getMsgFoundList().isEmpty() && assignedMessageQueue.getSeekOffset(messageQueue) == -1) {
                                     processQueue.putMessage(pullResult.getMsgFoundList());
+                                    // 把很多消息都放到了 队列中
                                     submitConsumeRequest(new ConsumeRequest(pullResult.getMsgFoundList(), messageQueue, processQueue));
                                 }
                             }

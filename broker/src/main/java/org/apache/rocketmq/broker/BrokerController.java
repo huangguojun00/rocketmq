@@ -740,7 +740,7 @@ public class BrokerController {
                 if (this.brokerConfig.isEnableControllerMode()) {
                     this.replicasManager = new ReplicasManager(this);
                 }
-                if (messageStoreConfig.isTimerWheelEnable()) {
+                if (messageStoreConfig.isTimerWheelEnable()) { //  开启时间轮
                     this.timerCheckpoint = new TimerCheckpoint(BrokerPathConfigHelper.getTimerCheckPath(messageStoreConfig.getStorePathRootDir()));
                     TimerMetrics timerMetrics = new TimerMetrics(BrokerPathConfigHelper.getTimerMetricsPath(messageStoreConfig.getStorePathRootDir()));
                     this.timerMessageStore = new TimerMessageStore(messageStore, messageStoreConfig, timerCheckpoint, timerMetrics, brokerStatsManager);

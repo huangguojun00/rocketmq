@@ -769,12 +769,12 @@ public class RouteInfoManager {
         try {
             log.info("start scanNotActiveBroker");
             for (Entry<BrokerAddrInfo, BrokerLiveInfo> next : this.brokerLiveTable.entrySet()) {
-                long last = next.getValue().getLastUpdateTimestamp();
-                long timeoutMillis = next.getValue().getHeartbeatTimeoutMillis();
-                if ((last + timeoutMillis) < System.currentTimeMillis()) {
+                long last = next.getValue().getLastUpdateTimestamp(); // 上次更新时间戳
+                long timeoutMillis = next.getValue().getHeartbeatTimeoutMillis(); // 心跳超时设置
+                if ((last + timeoutMillis) < System.currentTimeMillis()) { // 超时了关闭链接
                     RemotingUtil.closeChannel(next.getValue().getChannel());
                     log.warn("The broker channel expired, {} {}ms", next.getKey(), timeoutMillis);
-                    this.onChannelDestroy(next.getKey());
+                    this.onChannelDestroy(next.getKey()); // 放到未连接的队列去
                 }
             }
         } catch (Exception e) {
