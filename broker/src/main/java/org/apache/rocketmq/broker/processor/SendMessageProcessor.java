@@ -219,7 +219,7 @@ public class SendMessageProcessor extends AbstractSendMessageProcessor implement
         final SendMessageResponseHeader responseHeader = (SendMessageResponseHeader) response.readCustomHeader();
 
         final byte[] body = request.getBody();
-
+        LOGGER.info("接受消息" + new String(body));
         int queueIdInt = requestHeader.getQueueId();
         TopicConfig topicConfig = this.brokerController.getTopicConfigManager().selectTopicConfig(requestHeader.getTopic());
 

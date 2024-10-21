@@ -179,7 +179,7 @@ public class TimerMessageStore {
                 return ByteBuffer.allocateDirect(storeConfig.getMaxMessageSize() + 100);
             }
         };
-        enqueueGetService = new TimerEnqueueGetService();
+        enqueueGetService = new TimerEnqueueGetService(); // 获取队列
         enqueuePutService = new TimerEnqueuePutService();
         dequeueWarmService = new TimerDequeueWarmService();
         dequeueGetService = new TimerDequeueGetService();
@@ -643,6 +643,7 @@ public class TimerMessageStore {
                         msgExt.setQueueOffset(offset + (i / ConsumeQueue.CQ_STORE_UNIT_SIZE));
                         TimerRequest timerRequest = new TimerRequest(offsetPy, sizePy, delayedTime, System.currentTimeMillis(), MAGIC_DEFAULT, msgExt);
                         while (true) {
+                            // 从延时queue读出来 写入
                             if (enqueuePutQueue.offer(timerRequest, 3, TimeUnit.SECONDS)) {
                                 break;
                             }
@@ -710,6 +711,7 @@ public class TimerMessageStore {
         tmpBuffer.putInt(sizePy); //size
         tmpBuffer.putInt(hashTopicForMetrics(realTopic)); //hashcode of real topic
         tmpBuffer.putLong(0); //reserved value, just set to 0 now
+        LOGGER.info("消息入队写到timerlog文件里面 和 加入时间轮");
         long ret = timerLog.append(tmpBuffer.array(), 0, TimerLog.UNIT_SIZE); // 写到timerlog文件里面
         if (-1 != ret) {
             // If it's a delete message, then slot's total num -1
@@ -1037,6 +1039,7 @@ public class TimerMessageStore {
         if (escapeBridgeHook != null) {
             putMessageResult = escapeBridgeHook.apply(message);
         } else {
+            LOGGER.info("发送到指定的Topic中给消费者消费" + new String(message.getBody()));
             putMessageResult = messageStore.putMessage(message);
         }
 
@@ -1304,6 +1307,7 @@ public class TimerMessageStore {
                                 if (shouldRunningDequeue && req.getDelayTime() < currWriteTimeMs) {
                                     dequeuePutQueue.put(req);
                                 } else {
+
                                     boolean doEnqueueRes = doEnqueue(req.getOffsetPy(), req.getSizePy(), req.getDelayTime(), req.getMsg());
                                     req.idempotentRelease(doEnqueueRes || storeConfig.isTimerSkipUnknownError());
                                 }
