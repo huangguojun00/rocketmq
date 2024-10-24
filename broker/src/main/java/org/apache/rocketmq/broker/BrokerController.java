@@ -773,19 +773,19 @@ public class BrokerController {
 
         if (result) {
 
-            initializeRemotingServer();
+            initializeRemotingServer(); // 初始化netty交互
 
-            initializeResources();
+            initializeResources(); // 初始化要用的线程池
 
             registerProcessor(); // 这里决定了request code被哪个handler处理
 
-            initializeScheduledTasks();
+            initializeScheduledTasks(); // 初始化定时任务的东西
 
-            initialTransaction();
+            initialTransaction(); // 初始化事务消息的东西
 
-            initialAcl();
+            initialAcl(); // 初始化鉴权的东西
 
-            initialRpcHooks();
+            initialRpcHooks(); // 初始化一些钩子
 
             if (TlsSystemConfig.tlsMode != TlsMode.DISABLED) {
                 // Register a listener to reload SslContext
@@ -1424,7 +1424,7 @@ public class BrokerController {
     protected void startBasicService() throws Exception {
 
         if (this.messageStore != null) {
-            this.messageStore.start();
+            this.messageStore.start();  // 存储服务开启
         }
 
         if (this.timerMessageStore != null) {
@@ -1526,7 +1526,7 @@ public class BrokerController {
             this.brokerOuterAPI.start();
         }
 
-        startBasicService();
+        startBasicService(); // 开启服务
 
         if (!isIsolated && !this.messageStoreConfig.isEnableDLegerCommitLog() && !this.messageStoreConfig.isDuplicationEnable()) {
             changeSpecialServiceStatus(this.brokerConfig.getBrokerId() == MixAll.MASTER_ID);
